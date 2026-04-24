@@ -1,3 +1,4 @@
+streamlit
 fastapi
 uvicorn
 easyocr
@@ -6,6 +7,4 @@ ultralytics
 pillow
 requests
 torch
-torchvision
-torchaudio
 python-multipart

@@ -1,6 +1,10 @@
 data/
+*.zip
+*.tar
 *.pt
 __pycache__/
 *.pyc
-anpr_env/
-*.zip
+.ipynb_checkpoints/
+*.ipynb
+temp.jpg
+test.jpg

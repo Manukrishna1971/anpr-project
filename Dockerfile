@@ -2,11 +2,15 @@ FROM python:3.10
 
 WORKDIR /app
 
+# Fix OpenCV issue
+RUN apt-get update && apt-get install -y \
+    libgl1 \
+    libglib2.0-0
+
 COPY . .
 
-RUN pip install --no-cache-dir \
-    fastapi uvicorn streamlit easyocr opencv-python ultralytics pillow requests torch torchvision torchaudio
+RUN pip install --no-cache-dir -r requirements.txt
 
-EXPOSE 8000 8501
+EXPOSE 7860
 
-CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["streamlit", "run", "frontend/app.py", "--server.port=7860", "--server.address=0.0.0.0"]

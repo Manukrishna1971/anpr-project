@@ -1,40 +1,32 @@
 from ultralytics import YOLO
-import easyocr
 import cv2
-import re
+import easyocr
 
-# YOLO model (optional)
-model = YOLO("yolov8n.pt")
-
-# GPU enabled OCR
-reader = easyocr.Reader(['en'], gpu=True)
-
-def clean_text(text):
-    return re.sub(r'[^A-Z0-9]', '', text.upper())
+model = YOLO("yolov8n.pt")  # still using base model
+reader = easyocr.Reader(['en'])
 
 def detect_plate(image_path):
-    img = cv2.imread(image_path)
+    try:
+        img = cv2.imread(image_path)
 
-    if img is None:
-        return ["Error loading image"]
+        if img is None:
+            return "❌ Image not loaded"
 
-    # Resize for speed
-    img = cv2.resize(img, (640, 480))
+        # Instead of YOLO (since not trained), scan full image
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    gray = cv2.GaussianBlur(gray, (5, 5), 0)
+        results = reader.readtext(gray)
 
-    results = reader.readtext(gray, detail=1)
+        texts = []
 
-    best_text = ""
+        for (_, text, prob) in results:
+            if prob > 0.3:
+                texts.append(text)
 
-    for (_, text, prob) in results:
-        if prob > 0.3:
-            cleaned = clean_text(text)
-            if len(cleaned) > len(best_text):
-                best_text = cleaned
+        if len(texts) == 0:
+            return "⚠️ No plate text found"
 
-    if best_text:
-        return [best_text]
+        return "Detected: " + max(texts, key=len)
 
-    return ["No plate detected"]
+    except Exception as e:
+        return f"❌ Error: {str(e)}"
