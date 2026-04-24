@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+easyocr
+opencv-python
+ultralytics
+pillow
+requests
+torch
+torchvision
+torchaudio
+python-multipart
